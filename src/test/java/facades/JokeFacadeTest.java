@@ -28,6 +28,8 @@ public class JokeFacadeTest
 
     private static EntityManagerFactory emf;
     private static JokeFacade facade;
+    //Change this to change the number of dummy entries to be added to the test DB
+    private static int numberOfDummies = 10;
 
     public JokeFacadeTest()
     {
@@ -74,11 +76,14 @@ public class JokeFacadeTest
         {
             em.getTransaction().begin();
             em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
-            em.persist(new Joke("title1", "body1", "reference1", Joke.JokeType.PUNS));
-            em.persist(new Joke("title2", "body2", "reference2", Joke.JokeType.DARK));
-            em.persist(new Joke("title3", "body3", "reference3", Joke.JokeType.RIDDLES));
-            em.persist(new Joke("title4", "body4", "reference4", Joke.JokeType.MOM));
 
+            for (int i = 0; i < numberOfDummies; i++)
+            {
+                String title = "title" + i;
+                String body = "body" + i;
+                String reference = "reference" + i;
+                em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
+            }
             em.getTransaction().commit();
         }
         finally
@@ -99,7 +104,7 @@ public class JokeFacadeTest
         List<Joke> jokeList = facade.getAllJokes();
         assertFalse(jokeList == null);
         assertFalse(jokeList.isEmpty());
-        assertEquals(4, jokeList.size(), "Expects four rows in the database");
+        assertEquals(numberOfDummies, jokeList.size(), "Expects " + numberOfDummies + " rows in the database");
     }
 
     @Test
@@ -116,11 +121,13 @@ public class JokeFacadeTest
     public void getRandomJokeTest()
     {
         EntityManager em = emf.createEntityManager();
+        //overrides numberOfDummies
+        int n = 1000;
         try
         {
             em.getTransaction().begin();
             em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < n; i++)
             {
                 String title = "title" + i;
                 String body = "body" + i;
@@ -138,7 +145,7 @@ public class JokeFacadeTest
         assertFalse(jokeList == null);
         assertFalse(jokeList.isEmpty());
         assertTrue(jokeList.get(0).getId() > 0);
-        assertEquals(1000, jokeList.size());
+        assertEquals(n, jokeList.size());
         assertFalse(facade.getRandomJoke().getId().equals(facade.getRandomJoke().getId()));
 
     }

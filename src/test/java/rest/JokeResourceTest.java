@@ -1,6 +1,6 @@
 package rest;
 
-import entities.RenameMe;
+import entities.Joke;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -22,10 +22,18 @@ import org.junit.jupiter.api.Test;
 import utils.EMF_Creator.DbSelector;
 import utils.EMF_Creator.Strategy;
 
+/**
+ *
+ * @author Brandstrup
+ */
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class RenameMeResourceTest {
+public class JokeResourceTest
+{
 
+    //Change this to change the number of dummy entries to be added to the test DB
+    private static int numberOfDummies = 10;
+    
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     //Read this line from a settings-file  since used several places
@@ -35,75 +43,88 @@ public class RenameMeResourceTest {
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
 
-    static HttpServer startServer() {
+    static HttpServer startServer()
+    {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
     }
 
     @BeforeAll
-    public static void setUpClass() {
+    public static void setUpClass()
+    {
         emf = EMF_Creator.createEntityManagerFactory(DbSelector.TEST, Strategy.CREATE);
 
         //NOT Required if you use the version of EMF_Creator.createEntityManagerFactory used above        
         //System.setProperty("IS_TEST", TEST_DB);
         //We are using the database on the virtual Vagrant image, so username password are the same for all dev-databases
-        
         httpServer = startServer();
-        
+
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
-   
+
         RestAssured.defaultParser = Parser.JSON;
     }
-    
+
     @AfterAll
-    public static void closeTestServer(){
+    public static void closeTestServer()
+    {
         //System.in.read();
-         httpServer.shutdownNow();
+        httpServer.shutdownNow();
     }
-    
+
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
     //TODO -- Make sure to change the script below to use YOUR OWN entity class
     @BeforeEach
-    public void setUp() {
+    public void setUp()
+    {
         EntityManager em = emf.createEntityManager();
-        try {
+        try
+        {
             em.getTransaction().begin();
-            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
-            em.persist(new RenameMe("Some txt","More text"));
-            em.persist(new RenameMe("aaa","bbb"));
-           
+            em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
+            for (int i = 0; i < numberOfDummies; i++)
+            {
+                String title = "title" + i;
+                String body = "body" + i;
+                String reference = "reference" + i;
+                em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
+            }
+
             em.getTransaction().commit();
-        } finally {
+        }
+        finally
+        {
             em.close();
         }
     }
-    
+
     @Test
-    public void testServerIsUp() {
+    public void testServerIsUp()
+    {
         System.out.println("Testing is server UP");
-        given().when().get("/xxx").then().statusCode(200);
+        given().when().get("/joke").then().statusCode(200);
     }
-   
-    //This test assumes the database contains two rows
+
     @Test
-    public void testDummyMsg() throws Exception {
+    public void testDummyMsg() throws Exception
+    {
         given()
-        .contentType("application/json")
-        .get("/xxx/").then()
-        .assertThat()
-        .statusCode(HttpStatus.OK_200.getStatusCode())
-        .body("msg", equalTo("Hello World"));   
+                .contentType("application/json")
+                .get("/joke/").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("msg", equalTo("Hello World"));
     }
-    
+
     @Test
-    public void testCount() throws Exception {
+    public void testCount() throws Exception
+    {
         given()
-        .contentType("application/json")
-        .get("/xxx/count").then()
-        .assertThat()
-        .statusCode(HttpStatus.OK_200.getStatusCode())
-        .body("count", equalTo(2));   
+                .contentType("application/json")
+                .get("/joke/count").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("count", equalTo(numberOfDummies));
     }
 }
