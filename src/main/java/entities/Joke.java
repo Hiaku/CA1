@@ -37,6 +37,16 @@ public class Joke implements Serializable
     {
     }
 
+    public Joke(String title, String body, String reference, JokeType type)
+    {
+        this.title = title;
+        this.body = body;
+        this.reference = reference;
+        this.type = type;
+    }
+    
+    
+
     public String getTitle()
     {
         return title;

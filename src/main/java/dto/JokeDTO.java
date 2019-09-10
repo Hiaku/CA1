@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dto;
 
 import entities.Joke;
@@ -13,7 +8,7 @@ import entities.Joke;
  */
 public class JokeDTO
 {
- 
+
     private Long id;
     private String title;
     private String body;
@@ -28,6 +23,5 @@ public class JokeDTO
         this.reference = j.getReference();
         this.type = j.getType().toString();
     }
-    
-    
+
 }
