@@ -74,7 +74,6 @@ public class JokeResourceTest
     }
 
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
-    //TODO -- Make sure to change the script below to use YOUR OWN entity class
     @BeforeEach
     public void setUp()
     {
@@ -118,7 +117,7 @@ public class JokeResourceTest
     }
 
     @Test
-    public void testCount() throws Exception
+    public void countTest() throws Exception
     {
         given()
                 .contentType("application/json")
@@ -127,4 +126,27 @@ public class JokeResourceTest
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("count", equalTo(numberOfDummies));
     }
+    
+//    @Test
+//    public void allTest() throws Exception
+//    {
+//        given()
+//                .contentType("application/json")
+//                .get("/joke/count").then()
+//                .assertThat()
+//                .statusCode(HttpStatus.OK_200.getStatusCode())
+//                .body(expected, actual);
+//    }
+//    
+//    @Test
+//    public void idTest() throws Exception
+//    {
+//        
+//    }
+//    
+//    @Test
+//    public void randomTest() throws Exception
+//    {
+//        
+//    }
 }
