@@ -51,7 +51,7 @@ public class JokeResource
             {
                 MediaType.APPLICATION_JSON
             })
-    public String getJokeCountToJson()
+    public String getJokeCount()
     {
         long count = FACADE.getJokeCount();
         //System.out.println("--------------->"+count);
@@ -82,7 +82,7 @@ public class JokeResource
         JokeDTO jokeDTO = new JokeDTO(joke);
         return GSON.toJson(jokeDTO);
     }
-    
+
     @GET
     @Path("/random")
     @Produces(MediaType.APPLICATION_JSON)
@@ -93,4 +93,12 @@ public class JokeResource
         return GSON.toJson(jokeDTO);
     }
 
+    @Path("/populate/{numberOfEntries}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String populate(@PathParam("numberOfEntries") int numberOfEntries)
+    {
+        FACADE.populateJokes(numberOfEntries);
+        return "{\"msg\":\"Database has been populated with" + numberOfEntries + " Jokes!\"}";
+    }
 }

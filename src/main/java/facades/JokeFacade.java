@@ -58,7 +58,7 @@ public class JokeFacade
         }
 
     }
-    
+
     public List<Joke> getAllJokes()
     {
         EntityManager em = getEntityManager();
@@ -73,7 +73,7 @@ public class JokeFacade
             em.close();
         }
     }
-    
+
     public Joke getJokeById(long id)
     {
         EntityManager em = emf.createEntityManager();
@@ -87,7 +87,7 @@ public class JokeFacade
             em.close();
         }
     }
-    
+
     public Joke getRandomJoke()
     {
         EntityManager em = emf.createEntityManager();
@@ -95,7 +95,7 @@ public class JokeFacade
         {
             List<Joke> jokeList = getAllJokes();
             int listSize = jokeList.size();
-            
+
             return jokeList.get(rng.nextInt(listSize));
         }
         finally
@@ -104,4 +104,25 @@ public class JokeFacade
         }
     }
 
+    public void populateJokes(int numberOfEntries)
+    {
+        EntityManager em = emf.createEntityManager();
+        try
+        {
+            em.getTransaction().begin();
+            em.createNamedQuery("Joke.deleteAllRows").executeUpdate();
+            for (int i = 0; i < numberOfEntries; i++)
+            {
+                String title = "title" + i;
+                String body = "body" + i;
+                String reference = "reference" + i;
+                em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
+            }
+            em.getTransaction().commit();
+        }
+        finally
+        {
+            em.close();
+        }
+    }
 }
