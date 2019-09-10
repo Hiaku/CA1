@@ -7,55 +7,90 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
-
+/**
+ * 
+ * @author Brandstrup
+ */
 @Entity
-@NamedQuery(name = "RenameMe.deleteAllRows", query = "DELETE from RenameMe")
-public class Joke implements Serializable {
+@NamedQuery(name = "Joke.deleteAllRows", query = "DELETE from Joke")
+public class Joke implements Serializable
+{
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    public Joke() {
+    private String title;
+    private String body;
+    private String reference;
+    private JokeType type;
+
+    public enum JokeType
+    {
+        PUNS,
+        DARK,
+        MOM,
+        RIDDLES
     }
-        
-    public Long getId() {
+
+    public Joke()
+    {
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
+
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
-    
-    // TODO, delete this class, or rename to an Entity class that makes sense for what you are about to do
-    // Delete EVERYTHING below if you decide to use this class, it's dummy data used for the initial demo
-    private String dummyStr1;
-    private String dummyStr2;
 
-    public Joke(String dummyStr1, String dummyStr2) {
-        this.dummyStr1 = dummyStr1;
-        this.dummyStr2 = dummyStr2;
+    public String getBody()
+    {
+        return body;
     }
 
-    public String getDummyStr1() {
-        return dummyStr1;
+    public void setBody(String body)
+    {
+        this.body = body;
     }
 
-    public void setDummyStr1(String dummyStr1) {
-        this.dummyStr1 = dummyStr1;
+    public String getReference()
+    {
+        return reference;
     }
 
-    public String getDummyStr2() {
-        return dummyStr2;
+    public void setReference(String reference)
+    {
+        this.reference = reference;
     }
 
-    public void setDummyStr2(String dummyStr2) {
-        this.dummyStr2 = dummyStr2;
+    public JokeType getType()
+    {
+        return type;
     }
-    
-    
-    
 
-   
+    public void setType(JokeType type)
+    {
+        this.type = type;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Joke{" + "id=" + id + ", title=" + title + ", reference=" + reference + ", type=" + type + '}';
+    }
+
 }
