@@ -100,7 +100,8 @@ public class MembersFacade {
     public MembersDTO getMembersByFirstnameAndLast(String firstname, String lastname){
         EntityManager em = getEntityManager();
         try {
-            return em.createQuery("SELECT m FROM Members m WHERE m.firstname = :firstname AND m.lastname = : lastname", MembersDTO.class).setParameter("firstname", firstname).setParameter("lastname", lastname).getSingleResult();
+            return em.createQuery("SELECT m FROM Members m WHERE m.firstname = :firstname AND m.lastname = : lastname"
+                    , MembersDTO.class).setParameter("firstname", firstname).setParameter("lastname", lastname).getSingleResult();
         } finally {
             em.close();
         }
@@ -126,10 +127,14 @@ public class MembersFacade {
         }
     }
     
-    public Members removeAndAddColor(Members m){
+    public MembersDTO removeAndAddColor(Members m, String c){
         EntityManager em = getEntityManager();
+        getMemberByID(m.getId());
         try {
-            
+            TypedQuery<MembersDTO> member
+                    = em.createQuery("UPDATE MembersDTO SET color = :color WHERE id = :id"
+                            , MembersDTO.class).setParameter("color", c).setParameter("id", m.getId());
+            return member.getSingleResult();
         } finally {
             em.close();
         }
