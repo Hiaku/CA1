@@ -1,5 +1,7 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import entities.Joke;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
@@ -27,12 +29,14 @@ import utils.EMF_Creator.Strategy;
  * @author Brandstrup
  */
 //Uncomment the line below, to temporarily disable this test
-@Disabled
+//@Disabled
 public class JokeResourceTest
 {
 
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     //Change this to change the number of dummy entries to be added to the test DB
-    private static int numberOfDummies = 10;
+    private static int numberOfDummies = 5;
+    Joke jokeForIdTest;
     
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -89,6 +93,8 @@ public class JokeResourceTest
                 String reference = "reference" + i;
                 em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
             }
+            jokeForIdTest = new Joke("titleId", "bodyId", "referenceId", Joke.JokeType.PUNS);
+            em.persist(jokeForIdTest);
 
             em.getTransaction().commit();
         }
@@ -124,7 +130,7 @@ public class JokeResourceTest
                 .get("/joke/count").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("count", equalTo(numberOfDummies));
+                .body("count", equalTo(numberOfDummies+1));
     }
     
 //    @Test
@@ -132,17 +138,23 @@ public class JokeResourceTest
 //    {
 //        given()
 //                .contentType("application/json")
-//                .get("/joke/count").then()
+//                .get("/joke/all").then()
 //                .assertThat()
 //                .statusCode(HttpStatus.OK_200.getStatusCode())
-//                .body(expected, actual);
+//                .body("", equalTo());
 //    }
-//    
-//    @Test
-//    public void idTest() throws Exception
-//    {
-//        
-//    }
+    
+    @Test
+    public void idTest() throws Exception
+    {
+        long jokeId = jokeForIdTest.getId();
+        given()
+                .contentType("application/json")
+                .get("/joke/" + jokeId).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("title", equalTo(jokeForIdTest.getTitle()));
+    }
 //    
 //    @Test
 //    public void randomTest() throws Exception

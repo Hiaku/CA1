@@ -30,6 +30,7 @@ public class JokeFacadeTest
     private static JokeFacade facade;
     //Change this to change the number of dummy entries to be added to the test DB
     private static int numberOfDummies = 10;
+    Joke jokeForIdTest;
 
     public JokeFacadeTest()
     {
@@ -84,6 +85,9 @@ public class JokeFacadeTest
                 String reference = "reference" + i;
                 em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
             }
+            jokeForIdTest = new Joke("titleId", "bodyId", "referenceId", Joke.JokeType.PUNS);
+            em.persist(jokeForIdTest);
+            
             em.getTransaction().commit();
         }
         finally
@@ -104,7 +108,7 @@ public class JokeFacadeTest
         List<Joke> jokeList = facade.getAllJokes();
         assertFalse(jokeList == null);
         assertFalse(jokeList.isEmpty());
-        assertEquals(numberOfDummies, jokeList.size(), "Expects " + numberOfDummies + " rows in the database");
+        assertEquals(numberOfDummies+1, jokeList.size(), "Expects " + numberOfDummies+1 + " rows in the database");
     }
 
     @Test
@@ -114,9 +118,10 @@ public class JokeFacadeTest
         assertFalse(jokeList == null);
         assertFalse(jokeList.isEmpty());
         assertTrue(jokeList.get(0).getId() > 0);
+        assertEquals(facade.getJokeById(jokeForIdTest.getId()).toString(), jokeForIdTest.toString());
     }
 
-    //Should have a very small chance of failing, but is not guaranteed
+    //Should have a very small chance of failing, but should work the majority of the times
     @Test
     public void getRandomJokeTest()
     {
