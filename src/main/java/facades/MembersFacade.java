@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -126,14 +127,14 @@ public class MembersFacade {
         }
     }
     
-    public Members removeAndAddColor(Members m){
-        EntityManager em = getEntityManager();
-        try {
-            
-        } finally {
-            em.close();
-        }
-    }
+//    public Members removeAndAddColor(Members m){
+//        EntityManager em = getEntityManager();
+//        try {
+//            
+//        } finally {
+//            em.close();
+//        }
+//    }
     
     // For Adding new member
     public Members addMember(Members m){
