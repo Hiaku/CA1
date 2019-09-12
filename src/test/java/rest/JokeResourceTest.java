@@ -1,7 +1,5 @@
 package rest;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import entities.Joke;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
@@ -15,7 +13,10 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.hamcrest.CoreMatchers;
 import static org.hamcrest.Matchers.equalTo;
+import org.hamcrest.beans.HasProperty;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,6 @@ import utils.EMF_Creator.Strategy;
 public class JokeResourceTest
 {
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     //Change this to change the number of dummy entries to be added to the test DB
     private static int numberOfDummies = 5;
     Joke jokeForIdTest;
@@ -133,16 +133,22 @@ public class JokeResourceTest
                 .body("count", equalTo(numberOfDummies+1));
     }
     
-//    @Test
-//    public void allTest() throws Exception
-//    {
-//        given()
-//                .contentType("application/json")
-//                .get("/joke/all").then()
-//                .assertThat()
-//                .statusCode(HttpStatus.OK_200.getStatusCode())
-//                .body("", equalTo());
-//    }
+    @Test
+    public void allTest() throws Exception
+    {
+        int nmbrTest1 = numberOfDummies-1;
+        int nmbrTest2 = numberOfDummies-2;
+        
+        given()
+                .contentType("application/json")
+                .get("/joke/all").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(CoreMatchers.containsString("title" + nmbrTest1))
+                .and().assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(CoreMatchers.containsString("title" + nmbrTest2));
+    }
     
     @Test
     public void idTest() throws Exception
@@ -155,10 +161,15 @@ public class JokeResourceTest
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("title", equalTo(jokeForIdTest.getTitle()));
     }
-//    
-//    @Test
-//    public void randomTest() throws Exception
-//    {
-//        
-//    }
+    
+    @Test
+    public void randomTest() throws Exception
+    {
+        given()
+                .contentType("application/json")
+                .get("/joke/random").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(CoreMatchers.containsString("body"));
+    }
 }

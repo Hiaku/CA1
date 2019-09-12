@@ -99,6 +99,6 @@ public class JokeResource
     public String populate(@PathParam("numberOfEntries") int numberOfEntries)
     {
         FACADE.populateJokes(numberOfEntries);
-        return "{\"msg\":\"Database has been populated with" + numberOfEntries + " Jokes!\"}";
+        return "{\"msg\":\"Database has been populated with " + numberOfEntries + " Jokes!\"}";
     }
 }
