@@ -27,10 +27,10 @@ public class Joke implements Serializable
 
     public enum JokeType
     {
-        PUNS,
-        DARK,
-        MOM,
-        RIDDLES
+        Puns,
+        Dark,
+        Mom,
+        Riddles
     }
 
     public Joke()

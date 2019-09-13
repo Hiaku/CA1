@@ -91,9 +91,9 @@ public class JokeResourceTest
                 String title = "title" + i;
                 String body = "body" + i;
                 String reference = "reference" + i;
-                em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
+                em.persist(new Joke(title, body, reference, Joke.JokeType.Puns));
             }
-            jokeForIdTest = new Joke("titleId", "bodyId", "referenceId", Joke.JokeType.PUNS);
+            jokeForIdTest = new Joke("titleId", "bodyId", "referenceId", Joke.JokeType.Puns);
             em.persist(jokeForIdTest);
 
             em.getTransaction().commit();
