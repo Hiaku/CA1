@@ -23,5 +23,4 @@ public class JokeDTO
         this.reference = j.getReference();
         this.type = j.getType().toString();
     }
-
 }

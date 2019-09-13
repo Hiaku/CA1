@@ -116,7 +116,7 @@ public class JokeFacade
                 String title = "title" + i;
                 String body = "body" + i;
                 String reference = "reference" + i;
-                em.persist(new Joke(title, body, reference, Joke.JokeType.PUNS));
+                em.persist(new Joke(title, body, reference, Joke.JokeType.Puns));
             }
             em.getTransaction().commit();
         }
