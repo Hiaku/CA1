@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.servlet.http.HttpSession;
 
@@ -98,19 +99,10 @@ public class MembersFacade {
         }
     }
     
-    public MembersDTO getMembersByFirstnameAndLast(String firstname, String lastname){
-        EntityManager em = getEntityManager();
-        try {
-            return em.createQuery("SELECT m FROM Members m WHERE m.firstname = :firstname AND m.lastname = : lastname", MembersDTO.class).setParameter("firstname", firstname).setParameter("lastname", lastname).getSingleResult();
-        } finally {
-            em.close();
-        }
-    }
-    
     public MembersDTO getMemberByEmail(String email){
         EntityManager em = getEntityManager();
         try {
-            return em.createQuery("SELECT m FROM Members m WHERE m.email = :email", MembersDTO.class).setParameter("email", email).getSingleResult();
+            return em.createQuery("SELECT new dto.MembersDTO(m) FROM Members m WHERE m.email = :email", MembersDTO.class).setParameter("email", email).getSingleResult();
         } finally {
             em.close();
         }
@@ -127,14 +119,28 @@ public class MembersFacade {
         }
     }
     
-//    public Members removeAndAddColor(Members m){
-//        EntityManager em = getEntityManager();
-//        try {
-//            
-//        } finally {
-//            em.close();
-//        }
-//    }
+    public Members getChangeByID(Long id){
+        EntityManager em = getEntityManager();
+        try{
+            Members member = em.find(Members.class, id);
+            return member;
+        } finally{
+            em.close();
+        }
+    }
+    
+    public Members removeAndAddColor(Members m, String color){
+        EntityManager em = emf.createEntityManager();
+        m.setColor(color);
+        try {
+            em.getTransaction().begin();
+            em.persist(m);
+            em.getTransaction().commit();
+            return m;
+        } finally {
+            em.close();
+        }
+    }
     
     // For Adding new member
     public Members addMember(Members m){

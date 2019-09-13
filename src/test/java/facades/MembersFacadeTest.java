@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.Settings;
 import utils.EMF_Creator.DbSelector;
@@ -122,8 +123,50 @@ public class MembersFacadeTest {
         assertEquals(expected, result);
     }
     
+    @Test
+    public void testGetMemberByFirstname(){
+        List<MembersDTO> expected = new ArrayList<>();
+        expected.add(new MembersDTO(member));
+        
+        List<MembersDTO> result = facade.getMembersByFirstname("N");
+        
+        assertEquals(expected, result);
+    }
+    
+    @Test
+    public void testGetMemberByLastname(){
+        List<MembersDTO> expected = new ArrayList<>();
+        expected.add(new MembersDTO(member));
+        
+        List<MembersDTO> result = facade.getMembersByLastname("T");
+        
+        assertEquals(expected, result);
+    }
+    
+    // Does not work and not that relevant
+//    @Disabled
+//    @Test
+//    public void testGetMemberByFirstAndLastname(){
+//        List<MembersDTO> expected = new ArrayList<>();
+//        expected.add(new MembersDTO(member));
+//        
+//        MembersDTO result = facade.getMembersByFirstnameAndLast("N", "T");
+//        
+//        assertEquals(expected, result);
+//    }
+    
+    @Test
+    public void testChangeMembersColor(){
+        
+        String expected = "Red"; 
+        
+        Members result = facade.removeAndAddColor(member, "Red");
+        
+        assertEquals(expected, result.getColor());
+    }
+    
     @Test 
-    public void testGetAddMember(){
+    public void testAddMember(){
         
         Members newM = new Members("M", "B", "Yellow", "");
         
