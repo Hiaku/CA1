@@ -7,7 +7,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -17,13 +19,13 @@ public class MembersFacade {
 
     private static MembersFacade instance;
     private static EntityManagerFactory emf;
-    
+
     //Private Constructor to ensure Singleton
     private MembersFacade() {}
-    
-    
+
+
     /**
-     * 
+     *
      * @param _emf
      * @return an instance of this facade class.
      */
@@ -38,18 +40,18 @@ public class MembersFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
+
     // To see how many members are in the database
     public long getAllMembersCount(){
         EntityManager em = emf.createEntityManager();
         try{
             long allMembersCount = (long)em.createQuery("SELECT COUNT(m) FROM Members m").getSingleResult();
             return allMembersCount;
-        }finally{  
+        }finally{
             em.close();
         }
     }
-    
+
     // Getting a list of all the members
     public List<MembersDTO> getAllMembers(){
         EntityManager em = emf.createEntityManager();
@@ -64,7 +66,7 @@ public class MembersFacade {
             em.close();
         }
     }
-    
+
     public MembersDTO getMemberByID(Long id){
         EntityManager em = getEntityManager();
         try{
@@ -74,7 +76,7 @@ public class MembersFacade {
             em.close();
         }
     }
-    
+
     public List<MembersDTO> getMembersByFirstname(String firstname){
         EntityManager em = emf.createEntityManager();
         try {
@@ -85,7 +87,7 @@ public class MembersFacade {
             em.close();
         }
     }
-    
+
     public List<MembersDTO> getMembersByLastname(String lastname){
         EntityManager em = emf.createEntityManager();
         try {
@@ -96,26 +98,16 @@ public class MembersFacade {
             em.close();
         }
     }
-    
-    public MembersDTO getMembersByFirstnameAndLast(String firstname, String lastname){
-        EntityManager em = getEntityManager();
-        try {
-            return em.createQuery("SELECT m FROM Members m WHERE m.firstname = :firstname AND m.lastname = : lastname"
-                    , MembersDTO.class).setParameter("firstname", firstname).setParameter("lastname", lastname).getSingleResult();
-        } finally {
-            em.close();
-        }
-    }
-    
+
     public MembersDTO getMemberByEmail(String email){
         EntityManager em = getEntityManager();
         try {
-            return em.createQuery("SELECT m FROM Members m WHERE m.email = :email", MembersDTO.class).setParameter("email", email).getSingleResult();
+            return em.createQuery("SELECT new dto.MembersDTO(m) FROM Members m WHERE m.email = :email", MembersDTO.class).setParameter("email", email).getSingleResult();
         } finally {
             em.close();
         }
     }
-    
+
     public List<MembersDTO> getMembersByColor(String color){
         EntityManager em = emf.createEntityManager();
         try {
@@ -126,15 +118,25 @@ public class MembersFacade {
             em.close();
         }
     }
-    
-    public MembersDTO removeAndAddColor(Members m, String c){
+
+    public Members getChangeByID(Long id){
         EntityManager em = getEntityManager();
-        getMemberByID(m.getId());
+        try{
+            Members member = em.find(Members.class, id);
+            return member;
+        } finally{
+            em.close();
+        }
+    }
+
+    public Members removeAndAddColor(Members m, String color){
+        EntityManager em = emf.createEntityManager();
+        m.setColor(color);
         try {
-            TypedQuery<MembersDTO> member
-                    = em.createQuery("UPDATE MembersDTO SET color = :color WHERE id = :id"
-                            , MembersDTO.class).setParameter("color", c).setParameter("id", m.getId());
-            return member.getSingleResult();
+            em.getTransaction().begin();
+            em.persist(m);
+            em.getTransaction().commit();
+            return m;
         } finally {
             em.close();
         }
