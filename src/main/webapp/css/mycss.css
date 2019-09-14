@@ -9,3 +9,9 @@ and open the template in the editor.
 */
 
 .mydiv {width: 25px; height: 25px;background-color:yellow; margin:1px;}
+#container{
+	width: 226px;
+	height: 274px;
+	border: 3px solid darkblue;
+	margin: auto
+}

@@ -4,51 +4,31 @@
  * and open the template in the editor.
  */
 
-let getPosts = document.getElementById("getPosts").addEventListener()('click', getPosts);
+/* global fetch */
 
-var members = [
-    
-];
+const table = document.getElementById("memberTable");
+const reloadMembersButton = document.getElementById("reloadMembers");
 
-
-// START OF TABLE CREATION
-
-// MAKES THE START OF THE TABLE. 
-function tableHeaderStart() {
-    return "<table class=\"table\"><thead><tr>";
-}
-
-// END OF TABLE HEADER
-function tableHeaderEnd() {
-    return "</tr></thead><tbody>";
-}
-
-// MAKES A SINGLE TABLE HEADER.
-function tableHeader(header) {
-    return "<th scope=\"col\">" + header + "</th>";
-}
-
-// MAKES A SINGLE TABLE ROW.
-function tableRow(member) {
-    let returnString = "<tr>";
-    Object.values(member).forEach(element => returnString += "<td>" + element + "</td>");
-    return returnString + "</tr>";
-}
-
-// RETURNS AN ARRAY OF OBJECTS AS A TABLE.
-let membermap = function (members) {
-    // TABLE HEADER
-    let returnString = tableHeaderStart();
-    Object.keys(members[0]).forEach(element => returnString += tableHeader(element));
-    returnString += tableHeaderEnd();
-
-    // TABLE ROWS
-    members.forEach(element => returnString += tableRow(element));
-
-    // Ending table:
-    returnString += "</tbody></table>";
-
-    return returnString;
+reloadMembersButton.onclick = function (e)
+{
+    e.preventDefault();
+    populateTable();
 };
-document.getElementById("MembersTable").innerHTML = membermap(members);
-// END OF TABLE CREATION FUNCTIONS
+
+function populateTable()
+{
+    let urlAll = "/CA1/api/groupmembers/all";
+
+    fetch(urlAll)
+            .then(res => res.json())
+            .then(data => {
+                console.log("data", data);
+        
+                let memberTable = data.map(n => "<tr><td>" + n.id + "</td><td>" + n.firstname
+                            + "</td><td>" + n.lastname + "</td><td>" + n.color + "</td><td>" + n.email + "</td></tr>");
+                memberTable.unshift("<table><tr><th>id#</th><th>Firstname</th><th>Lastname</th><th>Color</th><th>Email</th></tr>");
+                memberTable.push("</table");
+                memberTable = memberTable.join('');
+                table.innerHTML = memberTable;
+            });
+}
