@@ -32,3 +32,5 @@ function populateTable()
                 table.innerHTML = memberTable;
             });
 }
+
+populateTable();
