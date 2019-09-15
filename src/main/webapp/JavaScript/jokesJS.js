@@ -18,10 +18,10 @@ jokeSingleButton.onclick = function (e)
             .then(res => res.json())
             .then(data => {
                 console.log("data", data);
-                paragraph.innerHTML = data.title + "\n" + data.body;
-            })
+                paragraph.innerHTML = data.body;
+            });
     table.innerHTML = "";
-}
+};
 
 jokeRandomButton.onclick = function (e)
 {
@@ -33,14 +33,19 @@ jokeRandomButton.onclick = function (e)
             .then(res => res.json())
             .then(data => {
                 console.log("data", data);
-                paragraph.innerHTML = data.title + "\n" + data.body;
-            })
+                paragraph.innerHTML = data.body;
+            });
     table.innerHTML = "";
-}
+};
 
 jokeAllButton.onclick = function (e)
 {
     e.preventDefault();
+    populateTable();
+};
+
+function populateTable()
+{
     let urlAll = "/CA1/api/joke/all";
 
     fetch(urlAll)
@@ -57,3 +62,5 @@ jokeAllButton.onclick = function (e)
             });
             paragraph.innerHTML = "";
 }
+
+populateTable();
